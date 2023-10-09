@@ -15,7 +15,6 @@ def fetch_words(number: int) -> list[str]:
         list[str]: A list of random words 
     """
     apiEndpoint = apiEndpointTemplate.replace("{number}", str(number))
-    # print(f'Connecting this following endpoint: {apiEndpoint}')
     print(f'Fetching {number} words from the interwebs...')
     r = requests.get(apiEndpoint)
     if r.status_code >= 400:

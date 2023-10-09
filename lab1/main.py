@@ -12,14 +12,10 @@ def ask_for_digit():
 
 def ask_for_character(prompt: str):
     while True:
-        # word = input("Enter a single character >>> ").lower()
         word = input(prompt).lower()
         if word.__len__() == 1:
             return word
 
-
-# Mocked data
-# words = [Word("feed"), Word("seed")]
 
 number_of_words = ask_for_digit()
 
