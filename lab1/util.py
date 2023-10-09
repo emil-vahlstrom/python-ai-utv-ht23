@@ -15,10 +15,7 @@ def find_all(word, sub):
         index = word.find(sub, index)
         if (index > -1):
             list.append(index)
-            index+=1
+            index += 1
         else:
             break
     return list
-
-def trace(msg):
-    print(msg)

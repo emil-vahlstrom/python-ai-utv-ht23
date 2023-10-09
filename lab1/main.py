@@ -1,144 +1,72 @@
 from util import find_all
-from input import ask_for_digit, ask_for_character
-from service import fetch_words;
-
-# # Documentation: https://random-word-api.herokuapp.com/home
-# apiEndpoint = "https://random-word-api.herokuapp.com/word?number=10"
+from service import fetch_words
+from word import Word
 
 
-# print(f'Connecting this following endpoint: {apiEndpoint}')
-
-# r = requests.get(apiEndpoint)
-# print(f'status code: {r.status_code}')
-
-# val = r.json()
-
-# print(val)
-# print(type(val))
-
-# for entry in val:
-#    print(f'entry: {entry}')
-
-# name = input('Write your name >>> ')
-# print(f'Hello {name}!')
-
-# test = "AbcA"
-# test_char = "A"
-
-# print(test.find('A'))
-# print(test.find('A', 4))
-
-# retval = find_all(test, test_char)
-# print(f'retval: {retval}')
+def ask_for_digit():
+    while True:
+        amount = input("How many words to you want (1-10) >>> ")
+        if amount.isnumeric() and int(amount) >= 1 and int(amount) <= 10:
+            return int(amount)
 
 
-# Hang men, how many words do you want?
-# Error: not a number
-
-# The words are:
-# *******
-# ****
-# ***
-# The letters you have already guessed: []
-#
-# Guess a letter:
-#
-# No match
-# There's a match
-# You have already chosen this letter, chose another one
+def ask_for_character(prompt: str):
+    while True:
+        # word = input("Enter a single character >>> ").lower()
+        word = input(prompt).lower()
+        if word.__len__() == 1:
+            return word
 
 
-# End game:
-# out of 10 hangmen, 8 survived
-# Try again? y/n
-# go to: 36
+# Mocked data
+# words = [Word("feed"), Word("seed")]
 
-# amount = input("How many words to you want? >>> ")
+number_of_words = ask_for_digit()
 
-# print(amount)
-# print(f'is number: {amount.isnumeric()}' )
+# Fetch words from API
+words = [Word(word_from_api) for word_from_api in fetch_words(number_of_words)]
 
+retries_left = 8
+unfinished_words = len(words)
 
-
-
-#number=ask_for_digit()
-#print(f'digit: {digit}')
-
-# Documentation: https://random-word-api.herokuapp.com/home
-apiEndpoint = "https://random-word-api.herokuapp.com/word?number=10"
-number_of_words = 1
-#words=fetch_words(number_of_words)
-
-class Word:
-    def __init__(self, public_word: str):
-        self.public_word = public_word
-        self.hidden_word = ("*" * len(public_word))
-    
-    def __repr__(self):
-        return f'Word(public_word={self.public_word}, hidden_word={self.hidden_word})'
-
-    def __str__(self):
-        return self.hidden_word
-
-#wordstr = words[0]
-#word = Word(wordstr)
-
-#print(f'word: {word}')
-#print(f'repr(word): {repr(word)}')
-
-visible_word = "blindfolding"
-hidden_word = "************"
-result=find_all(visible_word, "i")
-#print(result)
-#print(type(result))
-
-# hidden_word_list=list(hidden_word)
-
-#print(hidden_word_list)
-
-# for index in result:
-#     hidden_word_list[index] = visible_word[index]
-
-# hidden_word = "".join(hidden_word_list)
-#print(hidden_word)
-
-#already_used = {'a'}
-#print('a' in already_used)
-#print('b' in already_used)
-#already_used.add('b')
-#print('b' in already_used)
-
-retries_left=15
-
-already_used=set()
-while retries_left>0:
-    print(f'hidden_word: {hidden_word}')
-    print(f'retries left: {retries_left}')
-    print(f'already_used: {already_used}')
+already_used = set()
+while retries_left > 0 and unfinished_words > 0:
+    print(f"\nWords to solve({retries_left} retries left): ")
+    for word in words:
+        print("-", word.hidden_word)
 
     # Ask for input
     while True:
-        char=ask_for_character()
+        prompt = f'Enter a single character{f'(already_used: {', '.join(
+            already_used)})' if len(already_used) > 0 else ''} >>> '
+        char = ask_for_character(prompt)
         if char in already_used:
             print("Letter already exists")
         elif char not in already_used:
             already_used.add(char)
             break
-    
-    result=find_all(visible_word, char)
-    print(result)
-    if (len(result) == 0):
-        retries_left-=1
 
-    hidden_word_list=list(hidden_word)
+    letter_was_found = False
 
-    for index in result:
-        hidden_word_list[index] = visible_word[index]
-    hidden_word = "".join(hidden_word_list)
-    if (hidden_word.find("*")==-1):
-        break
+    # Check the words if there's a match and if so unmask the hidden letter
+    for word in words:
+        if word.hidden_word.find("*") == -1:
+            continue
+        result = find_all(word.public_word, char)
 
-if (retries_left > 0):
-    print(f'YOU WIN! The word is {visible_word}')
-else:
-    print("YOU LOSE!")
+        if (len(result) > 0):
+            letter_was_found = True
+
+        hidden_word_list = list(word.hidden_word)
+
+        for index in result:
+            hidden_word_list[index] = word.public_word[index]
+        word.hidden_word = "".join(hidden_word_list)
+
+        if word.hidden_word.find("*") == -1:
+            unfinished_words -= 1
+    if letter_was_found != True:
+        retries_left -= 1
+
+print(f'\n{'YOU WIN!' if retries_left > 0 else 'YOU LOSE!'} The words are: {
+      ', '.join([word.public_word for word in words])}')
