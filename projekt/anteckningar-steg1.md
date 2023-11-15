@@ -1,7 +1,7 @@
 # Projekt 1: Image recognition (MUST)
 
 ## Uppgift
-<p>Klassificera bilder på objekt med objekt detection/segmentation</p>
+<p>Klassificera bilder på objekt.</p>
 Jag ska välja ut ett antal objekt som jag ska träna en AI-model att känna igen. AI-modellen ska kunna klassifiera bilden beroende på vilket objekt som syns.
 
 Jag har några mål:
