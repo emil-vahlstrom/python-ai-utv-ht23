@@ -33,8 +33,8 @@ while retries_left > 0 and unfinished_words > 0:
 
     # Ask for input
     while True:
-        prompt = f'Enter a single character{f'(already_used: {', '.join(
-            already_used)})' if len(already_used) > 0 else ''} >>> '
+        already_used_formatted = f"(already_used: {', '.join(already_used)})" if len(already_used) > 0 else '' 
+        prompt = f"Enter a single character{already_used_formatted} >>> "
         char = ask_for_character(prompt)
         if char in already_used:
             print("Letter already exists")
@@ -58,11 +58,11 @@ while retries_left > 0 and unfinished_words > 0:
         for index in result:
             hidden_word_list[index] = word.public_word[index]
         word.hidden_word = "".join(hidden_word_list)
-
+        
         if word.hidden_word.find("*") == -1:
             unfinished_words -= 1
     if letter_was_found != True:
         retries_left -= 1
 
-print(f'\n{'YOU WIN!' if retries_left > 0 else 'YOU LOSE!'} The words are: {
-      ', '.join([word.public_word for word in words])}')
+the_words_are = {", ".join([word.public_word for word in words])}
+print(f'\n{"YOU WIN!" if retries_left > 0 else "YOU LOSE!"} The words are: {the_words_are}')
