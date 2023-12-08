@@ -1,3 +1,4 @@
 ## dependencies
-tensorflow requests notebook Pillow matplotlib numpy
--  
+tensorflow==2.14 requests notebook Pillow matplotlib numpy
+pygame scikit-learn pandas torch seaborn
+
